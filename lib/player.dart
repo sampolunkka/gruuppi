@@ -1,18 +1,26 @@
+import 'dart:collection';
+
 class Player {
   String name;
-  List<Want> wants = [];
+  List<Game>? games;
+  String bio = '';
 
   Player(this.name);
 }
 
-class Want {
-  Format? format;
-  Level? level;
+class Game {
+  String name;
+  int experience;
+  List<Format>? formats;
+
+  Game(this.name, this.experience, this.formats);
 }
 
 class Format {
-  String? game;
-  String? format;
+  String name;
+  Level level;
+
+  Format(this.name, this.level);
 }
 
 enum Level {

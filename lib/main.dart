@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gruuppi/player.dart';
 import 'package:gruuppi/profile_view.dart';
+import 'package:gruuppi/utils.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,27 +14,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        appBarTheme: AppBarTheme(
+          backgroundColor: HexColor('#000000'),
+          titleTextStyle: TextStyle(
+            fontSize: 36,
+            fontWeight: FontWeight.normal,
+            fontFamily: 'Cookie',
+            color: HexColor('#FFFFFF'),
+          ),
+        ),
       ),
-      home: const MyHomePage(title: 'gruuppi'),
+      title: 'Flutter Demo',
+      home: MyHomePage(title: 'gruuppi'),
     );
   }
 }
@@ -57,55 +50,31 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-
-
     // TestProfile
     Player player = Player('TestPlayer');
-    player.wants.add(Want()
-      ..format = Format()
-      ..format!.game = 'Magic: The Gathering'
-      ..format!.format = 'Commander'
-      ..level = Level.casual,
-    );
-    player.wants.add(Want()
-      ..format = Format()
-      ..format!.game = 'Magic: The Gathering'
-      ..format!.format = 'Standard'
-      ..level = Level.competitive,
-    );
-    player.wants.add(Want()
-      ..format = Format()
-      ..format!.game = 'Star Wars Unlimeted'
-      ..format!.format = 'Standard'
-      ..level = Level.any,
-    );
+    player.games = [
+      Game('Magic The Gathering', 100, [
+        Format('Commander', Level.casual),
+        Format('Modern', Level.competitive),
+      ]),
+      Game('Star Wars Unlimited', 200, [
+        Format('Format3', Level.any),
+      ]),
+    ];
+    player.bio = 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.';
 
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          // Here we take the value from the MyHomePage object that was created by
+          // the App.build method, and use it to set our appbar title.
+          title: Text(widget.title,
+              style: Theme.of(context).appBarTheme.titleTextStyle),
+        ),
+        body: ProfileView(player),
       ),
-      body: ProfileView(player),
     );
   }
 }
