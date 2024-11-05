@@ -29,12 +29,12 @@ class _ProfileViewState extends State<ProfileView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             const SizedBox(height: 16),
-            AvatarContainer(),
+            const AvatarContainer(),
             const SizedBox(height: 8),
             NameContainer(widget.player.name),
             const SizedBox(height: 8),
             BioContainer(widget.player.bio),
-            const SizedBox(height: 30),
+            const SizedBox(height: 8),
             ListView(
               shrinkWrap: true,
               children: widget.player.games!
@@ -96,10 +96,18 @@ class BioContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
-      padding: EdgeInsets.all(12),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: HexColor('#000000').withOpacity(0.3),
-        borderRadius: BorderRadius.circular(12),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [HexColor('#000000').withOpacity(0.2), HexColor('#000000').withOpacity(0.3)],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: HexColor('#FFFFFF').withOpacity(0.2),
+          width: 1,
+        ),
       ),
       child: Text(
         bio,
@@ -122,25 +130,43 @@ class GameWishContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(game.name,
-            style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.normal,
-                fontFamily: 'Domine',
-                color: HexColor('#FFFFFF'))),
-        Divider(color: HexColor('#FFFFFF'), thickness: 1),
-        ListView(
-          shrinkWrap: true,
-          children: <Widget>[
-            for (int i = 0; i < formats.length; i++) FormatRow(formats[i], i),
+    return Padding(
+      padding: EdgeInsets.only(top: 16),
+      child: Container(
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [HexColor('#FFFFFF').withOpacity(0.2), HexColor('#FFFFFF').withOpacity(0.1)],
+          ),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: HexColor('#FFFFFF').withOpacity(0.2),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(game.name,
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.normal,
+                    fontFamily: 'Domine',
+                    color: HexColor('#FFFFFF'))),
+            Divider(color: HexColor('#FFFFFF').withOpacity(0.4), thickness: 1),
+            ListView(
+              shrinkWrap: true,
+              children: <Widget>[
+                for (int i = 0; i < formats.length; i++)
+                  FormatRow(formats[i], i),
+              ],
+            ),
           ],
         ),
-        SizedBox(height: 24),
-      ],
+      ),
     );
   }
 }
@@ -153,21 +179,23 @@ class FormatRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double spacing = 8;
+    const double spacing = 8;
     return Padding(
       padding: EdgeInsets.only(top: index == 0 ? 0 : spacing),
       child: Container(
         decoration: BoxDecoration(
-          color: HexColor('#FFFFFF').withOpacity(0.3),
-          borderRadius: BorderRadius.circular(20),
+          color: HexColor('#000000').withOpacity(0.3),
+          borderRadius: BorderRadius.circular(26),
         ),
-        padding: EdgeInsets.all(8),
+        padding: EdgeInsets.all(spacing),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             TagContainer(format.name, TagType.format),
             SizedBox(width: spacing),
             TagContainer(format.level.name, TagType.level),
+            SizedBox(width: spacing),
+            TagContainer('Proxies OK', TagType.proxy),
           ],
         ),
       ),
@@ -175,7 +203,7 @@ class FormatRow extends StatelessWidget {
   }
 }
 
-enum TagType { game, format, level }
+enum TagType { game, format, level, proxy }
 
 class TagContainer extends StatelessWidget {
   final String text;
@@ -189,7 +217,7 @@ class TagContainer extends StatelessWidget {
 
   const TagContainer(this.text, this.type, {super.key});
 
-  Color getBackgroundColor() {
+  Color getTextColor() {
     switch (type) {
       case TagType.game:
         return HexColor('#FFCDD2');
@@ -197,6 +225,8 @@ class TagContainer extends StatelessWidget {
         return HexColor('#C8E6C9');
       case TagType.level:
         return HexColor('#FFE0B2');
+      case TagType.proxy:
+        return HexColor('#7de8ff');
     }
   }
 
@@ -208,9 +238,12 @@ class TagContainer extends StatelessWidget {
         return HexColor('#81C784');
       case TagType.level:
         return HexColor('#FFB74D');
+      case TagType.proxy:
+        return HexColor('#52a0b1');
     }
   }
 
+  /*
   Color getTextColor() {
     switch (type) {
       case TagType.game:
@@ -219,26 +252,27 @@ class TagContainer extends StatelessWidget {
         return HexColor('#388E3C');
       case TagType.level:
         return HexColor('#F57C00');
+      case TagType.proxy:
+        return HexColor('#FFFFFF');
     }
   }
+   */
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.fromLTRB(left, top, right, bottom),
       decoration: BoxDecoration(
-        color: getBackgroundColor(),
         border: Border.all(
-          color: getBorderColor(),
-          width: 1,
+          color: getTextColor().withOpacity(0.5),
+          width: 2,
         ),
         borderRadius: BorderRadius.circular(16),
       ),
-      child: Text(text,
-          style: TextStyle(
-              color: getTextColor(),
-              fontSize: 14,
-              fontWeight: FontWeight.bold)),
+      child: Text(
+        text,
+        style: TextStyle(color: getTextColor(), fontSize: 14),
+      ),
     );
   }
 }
