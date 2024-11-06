@@ -22,27 +22,28 @@ class _ProfileViewState extends State<ProfileView> {
           colors: [HexColor('#286169'), HexColor('#332d41')],
         ),
       ),
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            const SizedBox(height: 16),
-            const AvatarContainer(),
-            const SizedBox(height: 8),
-            NameContainer(widget.player.name),
-            const SizedBox(height: 8),
-            BioContainer(widget.player.bio),
-            const SizedBox(height: 8),
-            ListView(
-              shrinkWrap: true,
-              children: widget.player.games!
-                  .map((game) => GameWishContainer(game, game.formats!))
-                  .toList(),
+      child: Stack(
+        children: [
+          AvatarContainer(),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const SizedBox(height: 100),
+                BioContainer(widget.player.name, widget.player.bio),
+                ListView(
+                  shrinkWrap: true,
+                  children: widget.player.games!
+                      .map((game) => GameWishContainer(game, game.formats!))
+                      .toList(),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          DecisionContainer(),
+        ],
       ),
     );
   }
@@ -53,13 +54,21 @@ class AvatarContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        width: 140,
-        height: 140,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.grey,
+    return Container(
+      height: 140,
+      width: MediaQuery.sizeOf(context).width,
+      child: ShaderMask(
+        shaderCallback: (rect) {
+          return LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.black, Colors.transparent],
+          ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+        },
+        blendMode: BlendMode.dstIn,
+        child: Image.asset(
+          'assets/placeholder/squirrels.png',
+          fit: BoxFit.fitWidth,
         ),
       ),
     );
@@ -88,9 +97,10 @@ class NameContainer extends StatelessWidget {
 }
 
 class BioContainer extends StatelessWidget {
+  final String name;
   final String bio;
 
-  const BioContainer(this.bio, {super.key});
+  const BioContainer(this.name, this.bio, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +111,10 @@ class BioContainer extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [HexColor('#000000').withOpacity(0.2), HexColor('#000000').withOpacity(0.3)],
+          colors: [
+            HexColor('333942').withOpacity(1),
+            HexColor('#000000').withOpacity(0.3)
+          ],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
@@ -109,14 +122,23 @@ class BioContainer extends StatelessWidget {
           width: 1,
         ),
       ),
-      child: Text(
-        bio,
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.normal,
-          fontFamily: 'Lato',
-          color: HexColor('#FFFFFF'),
-        ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          NameContainer(name),
+          Divider(color: HexColor('#FFFFFF').withOpacity(0.4), thickness: 1),
+          Text(
+            bio,
+            textAlign: TextAlign.justify,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.normal,
+              fontFamily: 'Lato',
+              color: HexColor('#FFFFFF'),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -138,7 +160,10 @@ class GameWishContainer extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [HexColor('#FFFFFF').withOpacity(0.2), HexColor('#FFFFFF').withOpacity(0.1)],
+            colors: [
+              HexColor('#FFFFFF').withOpacity(0.2),
+              HexColor('#FFFFFF').withOpacity(0.1)
+            ],
           ),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
@@ -150,12 +175,13 @@ class GameWishContainer extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(game.name,
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.normal,
-                    fontFamily: 'Domine',
-                    color: HexColor('#FFFFFF'))),
+            Center(
+                child: Text(game.name,
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.normal,
+                        fontFamily: 'Domine',
+                        color: HexColor('#FFFFFF')))),
             Divider(color: HexColor('#FFFFFF').withOpacity(0.4), thickness: 1),
             ListView(
               shrinkWrap: true,
@@ -276,3 +302,13 @@ class TagContainer extends StatelessWidget {
     );
   }
 }
+
+class DecisionContainer extends StatelessWidget {
+  const DecisionContainer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
+}
+
